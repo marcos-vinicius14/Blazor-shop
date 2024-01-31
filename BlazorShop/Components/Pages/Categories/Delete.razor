@@ -1,0 +1,72 @@
+﻿@page "/categories/delete/{id:int}"
+@using Microsoft.AspNetCore.Mvc
+@rendermode InteractiveServer
+@inject ApplicationDbContext Context
+@inject NavigationManager Navigation
+
+
+<h1>Excluir Categoria</h1>
+
+@if (Category is null)
+{
+    <p>Categoria não encontrada!</p>
+}
+else
+{
+    <h2>@Category.Title (@Category.Id)</h2>
+    
+    <EditForm Model="@Category" OnValidSubmit="OnValidSubmitAsync">
+        <div class="mb-3">
+            <label class="form-label">Nome da categoria</label>
+            <InputText @bind-Value="@Category.Title" class="form-control mb-3" readonly/>
+           
+            <button type="submit" class="btn btn-danger">Excluir</button>
+            <a href="/categories"
+               class="btn btn-success">
+                Cancelar
+            </a>
+            
+        </div>
+
+    </EditForm>
+}
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+
+    public CategoryModel? Category { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            Category = await Context
+                .Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == Id);
+        }
+        catch
+        {
+            throw new Exception("Não foi possível encontrar a categoria");
+        }
+    }
+
+    public async Task OnValidSubmitAsync()
+    {
+       
+        
+        try
+        {
+            Context.Categories.Remove(Category);
+            await Context.SaveChangesAsync();
+        }
+        catch
+        {
+            throw new Exception("Não foi possível excluir a categoria");
+        }
+        
+        Navigation.NavigateTo("categories");
+    }
+}
