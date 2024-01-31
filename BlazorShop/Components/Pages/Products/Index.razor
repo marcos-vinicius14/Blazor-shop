@@ -1,0 +1,57 @@
+﻿@page "/products"
+@inject ApplicationDbContext Context
+
+<h2>Produtios</h2>
+<a href="/products/create" class="btn btn-primary">Adicionar novo produto</a>
+
+
+@if (!Products.Any())
+{
+    <p class="text-center">
+        <em>Carregando...</em>
+    </p>
+}
+
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nome</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Products)
+            {
+                <td>@product.Title</td>
+                <td>
+                    <a href="/products/@product.Id">
+                        @product.Title
+                    </a>
+                </td>
+            }
+        </tbody>
+    </table>
+}
+
+@code
+{
+    public IEnumerable<ProductModel> Products { get; set; } = Enumerable.Empty<ProductModel>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            Products = await Context
+                .Products
+                .AsNoTracking()
+                .ToListAsync();
+        }
+        catch
+        {
+            throw new Exception("Produtos não encontrados");
+        }
+    }
+}
