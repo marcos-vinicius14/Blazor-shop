@@ -11,7 +11,8 @@ public class ProductModel
     [MaxLength(120, ErrorMessage = "O titulo deve conter no máximo 120 caracteres")]
     [MinLength(5, ErrorMessage = "O minímo de caracteres é 5.")]
     public string Title { get; set; } = String.Empty;
-    public string? Description { get; set; }
+
+    public string Description { get; set; } = String.Empty;
     
     [Required(ErrorMessage = "Informe um preço.")]
     [DataType(DataType.Currency)]

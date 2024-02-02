@@ -1,4 +1,5 @@
 ﻿@page "/products"
+@using System.Globalization
 @inject ApplicationDbContext Context
 
 <h2>Produtios</h2>
@@ -19,18 +20,30 @@ else
         <tr>
             <th>Id</th>
             <th>Nome</th>
+            <th>Categoria</th>
+            <th>Preço</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
             @foreach (var product in Products)
             {
-                <td>@product.Title</td>
-                <td>
-                    <a href="/products/@product.Id">
-                        @product.Title
-                    </a>
-                </td>
+                <tr>
+                    <td>@product.Id</td>
+                    <td>
+                        <a href="/products/@product.Id">
+                            @product.Title
+                        </a>
+                    </td>
+                    <td>@product.Category.Title</td>
+                    <td>@product.Price.ToString("C", new CultureInfo("pt-br"))</td>
+                    <td>
+                        <a href="/products/edit" class="btn btn-primary">Editar</a>
+                        &nbsp;
+                        &nbsp;
+                        <a href="/products/delete/@product.Id" class="btn btn-danger">Excluir</a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -47,6 +60,7 @@ else
             Products = await Context
                 .Products
                 .AsNoTracking()
+                .Include(x => x.Category)
                 .ToListAsync();
         }
         catch
